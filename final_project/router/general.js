@@ -4,7 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-function filterBooksByISBN(booksObj, targetISBN) {
+var filterbyISBN = function filterBooksByISBN(booksObj, targetISBN) {
     return Object.values(booksObj).filter(book => book.isbn === targetISBN);
   }
 function filterBooksByAuthor(booksObj, targetAuthor) {
@@ -68,3 +68,4 @@ public_users.get('/review/:isbn',function (req, res) {
 });
 
 module.exports.general = public_users;
+module.exports.filterbyISBN = filterbyISBN;

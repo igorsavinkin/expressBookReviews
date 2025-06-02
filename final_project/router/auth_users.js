@@ -1,9 +1,14 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
+var filterbyISBN = require("./general.js").filterbyISBN;
 const regd_users = express.Router();
 
 let users = [];
+
+function filterBooksByISBN(booksObj, targetISBN) {
+    return Object.values(booksObj).filter(book => book.isbn === targetISBN);
+  }
 
 const isValid = (username)=>{ //returns boolean
     let userswithsamename = users.filter((user) => {
@@ -58,10 +63,27 @@ regd_users.post("/login", (req,res) => {
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+// auth/review/978-0140448955
+regd_users.put("/auth/review/:isbn", (req, res) => {  
+    if (req.session.authorization) {
+        let filteredBooks = filterBooksByISBN(books, req.params.isbn);
+        if (filteredBooks.length > 0 ) {
+            let allReviews =  filteredBooks[0].reviews;  
+            res.send(allReviews);
+        //return res.send(JSON.stringify(filteredBooks.filteredBooks[0].reviews, null, 4));
+        } else {
+            return res.send("No books in store for isbn: " + req.params.isbn )
+        }
+        // Create or update review based on provided isbn
+        /*friends[req.body.email] = {
+            "firstName": req.body.firstName,
+            "lastName": req.body.lastName,
+            "DOB": req.body.DOB 
+        };*/
+    }
+    // Send response indicating user addition
+    res.send("The user" + (' ') + (req.body.firstName) + " has been added!");
+}); 
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
