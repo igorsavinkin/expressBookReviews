@@ -20,9 +20,19 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
+/*public_users.get('/',function (req, res) {
   res.set('Content-Type', 'application/json');
   return res.send(JSON.stringify({books}, null, 4));
+});*/
+
+public_users.get('/',function (req, res) {
+	let myPromise = new Promise((resolve,reject) => {   
+		res.send(JSON.stringify({books}, null, 4));
+	})
+	.then(() => { 
+	    console.log("Books are loaded."); 
+	})
+	.catch((err)=> { res.status(400).send("An error in getting books: "+ err) });	 
 });
 
 // Get book details based on ISBN
