@@ -62,8 +62,7 @@ regd_users.post("/login", (req,res) => {
     }
 });
 
-// Add a book review
-// auth/review/978-0140448955
+// Add or update a book review 
 regd_users.put("/auth/review/:isbn", (req, res) => {  
     if (req.session.authorization) {
         let filteredBooks = filterBooksByISBN(books, req.params.isbn);
@@ -72,20 +71,13 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
             //let allReviews =  filteredBooks[0].reviews; 
             // Updating or adding review from query
             filteredBooks[0].reviews[username] =  req.query.review;
-            res.send( filteredBooks[0].reviews );
+            res.send(`Review "${filteredBooks[0].reviews[username]}" of user "${username}" has been added to the book with ISBN "${req.params.isbn}".` );
         //return res.send(JSON.stringify(filteredBooks.filteredBooks[0].reviews, null, 4));
         } else {
             return res.send("No books in store for isbn: " + req.params.isbn )
-        }
-        // Create or update review based on provided isbn
-        /*friends[req.body.email] = {
-            "firstName": req.body.firstName,
-            "lastName": req.body.lastName,
-            "DOB": req.body.DOB 
-        };*/
-    }
-    // Send response indicating user addition
-    res.send("The user" + (' ') + (req.body.firstName) + " has been added!");
+        } 
+    } 
+    res.send("The user is not authorised/not logged in.");
 }); 
 
 module.exports.authenticated = regd_users;
