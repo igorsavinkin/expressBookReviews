@@ -2,13 +2,13 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
+const isValid = require('./router/auth_users.js').isValid;
+let users = require('./router/auth_users.js').users;
 const genl_routes = require('./router/general.js').general;
 
 
-let users = []
-
 // Check if a user with the given username already exists
-const doesExist = (username) => {
+/*const doesExist = (username) => {
     // Filter the users array for any user with the same username
     let userswithsamename = users.filter((user) => {
         return user.username === username;
@@ -19,10 +19,10 @@ const doesExist = (username) => {
     } else {
         return false;
     }
-}
+}*/
 
 // Check if the user with the given username and password exists
-const authenticatedUser = (username, password) => {
+/*const authenticatedUser = (username, password) => {
     // Filter the users array for any user with the same username and password
     let validusers = users.filter((user) => {
         return (user.username === username && user.password === password);
@@ -33,13 +33,13 @@ const authenticatedUser = (username, password) => {
     } else {
         return false;
     }
-}
+}*/
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
+app.use("/customer", session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 
 
@@ -67,7 +67,7 @@ app.post("/register", (req, res) => {
     // Check if both username and password are provided
     if (username && password) {
         // Check if the user does not already exist
-        if (!doesExist(username)) {
+        if (!isValid(username)) {
             // Add the new user to the users array
             users.push({"username": username, "password": password});
             return res.status(200).json({message: "User successfully registered. Now you can login"});
