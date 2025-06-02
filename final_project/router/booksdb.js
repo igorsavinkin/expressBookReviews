@@ -2,7 +2,8 @@ let books = {
     1: {
         "author": "Chinua Achebe",
         "title": "Things Fall Apart",
-        "reviews": {"Marek":"Good book",
+        "reviews": { "Marek":"Good book", 
+                     "Igor": "Fairy stories...",
                      "Anna":"Interesting!"},
         "isbn": "978-0385474542"
     },

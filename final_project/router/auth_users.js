@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
-var filterbyISBN = require("./general.js").filterbyISBN;
+//var filterbyISBN = require("./general.js").filterbyISBN;
 const regd_users = express.Router();
 
 let users = [];
@@ -50,7 +50,7 @@ regd_users.post("/login", (req,res) => {
         // Generate JWT access token
         let accessToken = jwt.sign({
             data: password
-        }, 'access', { expiresIn: 60 * 60  }); // 1 hour
+        }, 'access', { expiresIn: 600 * 600  }); // 1 hour
 
         // Store access token and username in session
         req.session.authorization = {
@@ -67,9 +67,12 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {  
     if (req.session.authorization) {
         let filteredBooks = filterBooksByISBN(books, req.params.isbn);
+        let username = req.session.authorization.username;
         if (filteredBooks.length > 0 ) {
-            let allReviews =  filteredBooks[0].reviews;  
-            res.send(allReviews);
+            //let allReviews =  filteredBooks[0].reviews; 
+            // Updating or adding review from query
+            filteredBooks[0].reviews[username] =  req.query.review;
+            res.send( filteredBooks[0].reviews );
         //return res.send(JSON.stringify(filteredBooks.filteredBooks[0].reviews, null, 4));
         } else {
             return res.send("No books in store for isbn: " + req.params.isbn )
