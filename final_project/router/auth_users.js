@@ -68,11 +68,24 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         let filteredBooks = filterBooksByISBN(books, req.params.isbn);
         let username = req.session.authorization.username;
         if (filteredBooks.length > 0 ) {
-            //let allReviews =  filteredBooks[0].reviews; 
             // Updating or adding review from query
             filteredBooks[0].reviews[username] =  req.query.review;
             res.send(`Review "${filteredBooks[0].reviews[username]}" of user "${username}" has been added to the book with ISBN "${req.params.isbn}".` );
-        //return res.send(JSON.stringify(filteredBooks.filteredBooks[0].reviews, null, 4));
+        } else {
+            return res.send("No books in store for isbn: " + req.params.isbn )
+        } 
+    } 
+    res.send("The user is not authorised/not logged in.");
+}); 
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {  
+    if (req.session.authorization) {
+        let filteredBooks = filterBooksByISBN(books, req.params.isbn);
+        let username = req.session.authorization.username;
+        if (filteredBooks.length > 0 ) {
+            // deleting review 
+            delete filteredBooks[0].reviews[username] ;
+            res.send(`A review of user "${username}" has been deleted from the book with ISBN "${req.params.isbn}".` );
         } else {
             return res.send("No books in store for isbn: " + req.params.isbn )
         } 
